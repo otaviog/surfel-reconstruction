@@ -16,7 +16,7 @@ use align3d::{
 use bitarray::BitArray;
 use clap::Parser;
 use image::DynamicImage;
-use surfelrec::{SurfelFusion, SurfelFusionParameters, SurfelModel};
+use surfelrec::{SurfelFusion, SurfelFusionParameters, SurfelModel, SurfelNode};
 use vulkano::memory::allocator::MemoryAllocator;
 
 use align3d::{
@@ -204,7 +204,7 @@ fn main() {
     );
 
     let render_model = slam.model.vk_data.clone();
-    let node = render_model.make_node(&mut manager);
+    let node = SurfelNode::new(render_model.clone());
     let mut geo_viewer = GeoViewer::from_manager(manager);
 
     let slam_thread = thread::spawn(move || {

@@ -58,7 +58,7 @@ dependencies = [
 name = "akaze"
 version = "0.7.0"
 dependencies = [
- "bitarray 0.9.3",
+ "bitarray",
  "cv-core",
  "derive_more",
  "float-ord",
@@ -277,15 +277,6 @@ name = "bitarray"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1d5c2b9bdd54bc98d0b4838def530947f4b4631070de267a77a848feb561262"
-dependencies = [
- "cfg-if",
-]
-
-[[package]]
-name = "bitarray"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893ba8042bd499eacc3186361c58c2389986a1e0359e0144e532619833584422"
 dependencies = [
  "cfg-if",
 ]
@@ -2705,7 +2696,7 @@ version = "0.1.0"
 dependencies = [
  "akaze",
  "align3d",
- "bitarray 0.10.0",
+ "bitarray",
  "clap 4.4.6",
  "criterion",
  "image",
