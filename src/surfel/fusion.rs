@@ -9,10 +9,10 @@ use rayon::prelude::*;
 
 use super::{indexmap::IndexMap, surfel_model::SurfelModel, surfel_type::SurfelBuilder};
 use crate::surfel::Surfel;
-use crate::transform::TransformableMove;
-use crate::trig::angle_between_normals;
+use crate::utils::math::angle_between_normals;
 use crate::utils::window_iter::window;
-use crate::{camera::PinholeCamera, range_image::RangeImage};
+use align3d::transform::TransformableMove;
+use align3d::{camera::PinholeCamera, range_image::RangeImage};
 
 pub struct SurfelFusionParameters {
     pub confidence_remove_threshold: f32,
@@ -389,7 +389,7 @@ impl SurfelFusion {
                         } else {
                             SurfelUpdateCommand::Add(
                                 ri_surfel.surfel,
-                                ri_surfel.sparse_feature.clone(),
+                                ri_surfel.sparse_feature,
                             )
                         }
                     })
@@ -430,7 +430,7 @@ impl SurfelFusion {
                         }
                         SurfelUpdateCommand::Add(surfel, sparse_feature) => {
                             add_count += 1;
-                            let model_index = cpu_writer.add(&surfel);
+                            let model_index = cpu_writer.add(surfel);
                             (model_index, surfel, sparse_feature)
                         }
                     };
@@ -478,13 +478,11 @@ impl SurfelFusion {
 
 #[cfg(test)]
 mod tests {
+    use align3d::viz::Manager;
     use rstest::rstest;
     use std::{fs::File, time::Instant};
 
-    use crate::{
-        unit_test::{sample_range_img_ds2, TestRangeImageDataset},
-        viz::Manager,
-    };
+    use crate::unit_test::{sample_range_img_ds2, TestRangeImageDataset};
 
     use super::*;
 
@@ -506,7 +504,7 @@ mod tests {
             .unwrap();
         for i in 0..NUM_ITER {
             let range_image = sample_range_img_ds2.get(i).unwrap();
-            let camera = sample_range_img_ds2.pinhole_camera(i);
+            let camera = sample_range_img_ds2.get_pinhole_camera(i);
             let start = Instant::now();
 
             // guard
@@ -549,7 +547,7 @@ mod tests {
             .unwrap();
         for i in 0..NUM_ITER {
             let range_image = sample_range_img_ds2.get(i).unwrap();
-            let camera = sample_range_img_ds2.pinhole_camera(i);
+            let camera = sample_range_img_ds2.get_pinhole_camera(i);
             let start = Instant::now();
 
             // guard

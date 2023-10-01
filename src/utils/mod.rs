@@ -1,3 +1,3 @@
-pub mod access;
-pub mod math;
-pub mod window_iter;
+pub(crate) mod access;
+pub(crate) mod math;
+pub(crate) mod window_iter;

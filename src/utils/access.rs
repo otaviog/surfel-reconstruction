@@ -1,7 +1,7 @@
 use nalgebra::Vector3;
 use ndarray::{Array1, Array2, ArrayBase, Ix1, ViewRepr};
 
-use crate::error::A3dError;
+use crate::error::{SurfelReconsResult, SurfelReconstError};
 
 pub trait ToVector3<T> {
     fn to_vector3(&self) -> Vector3<T>;
@@ -30,16 +30,16 @@ impl<T: Copy> FlattenVector3<T> for Array1<Vector3<T>> {
 
 pub trait UnflattenVector3<T: Copy> {
     type Output;
-    fn unflatten_vector3(&self) -> Result<Self::Output, A3dError>;
+    fn unflatten_vector3(&self) -> SurfelReconsResult<Self::Output>;
 }
 
 impl<T: Copy> UnflattenVector3<T> for Array2<T> {
     type Output = Array1<Vector3<T>>;
-    fn unflatten_vector3(&self) -> Result<Self::Output, A3dError> {
+    fn unflatten_vector3(&self) -> SurfelReconsResult<Self::Output> {
         let dim = self.dim();
         if dim.1 != 3 {
-            return Err(A3dError::Assertion(
-                "Invalid dim size. Must be 3 2nd dimension".to_string(),
+            return Err(SurfelReconstError::InvalidArgument(
+                "Must 2nd dimension must be 3".to_string(),
             ));
         }
 

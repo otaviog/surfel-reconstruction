@@ -1,6 +1,6 @@
 use nalgebra::{Vector2, Vector3};
 
-use crate::{
+use align3d::{
     camera::CameraIntrinsics,
     range_image::RangeImage,
     transform::{Transform, TransformableMove},

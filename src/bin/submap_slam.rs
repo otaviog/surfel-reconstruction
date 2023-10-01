@@ -1,24 +1,22 @@
 use std::{collections::HashMap, iter, thread};
 
 use akaze::Akaze;
-use surfelrec::{
-    surfel::{SurfelFusion, SurfelFusionParameters, SurfelModel},
-};
 use align3d::{
     bilateral::BilateralFilter,
     camera::{CameraIntrinsics, PinholeCamera},
     icp::{multiscale::MultiscaleAlign, MsIcpParams},
-    image::{RgbdFrame, ToImageRgb8},
     io::dataset::SubsetDataset,
     metrics::TransformMetrics,
     range_image::{RangeImage, RangeImageBuilder},
     trajectory::{Trajectory, TrajectoryBuilder},
     transform::Transform,
-    viz::{node::MakeNode, GeoViewer, Manager},
+    viz::{GeoViewer, Manager},
+    RgbdFrame,
 };
 use bitarray::BitArray;
 use clap::Parser;
 use image::DynamicImage;
+use surfelrec::{SurfelFusion, SurfelFusionParameters, SurfelModel};
 use vulkano::memory::allocator::MemoryAllocator;
 
 use align3d::{

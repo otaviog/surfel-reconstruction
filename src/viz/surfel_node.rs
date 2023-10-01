@@ -20,18 +20,19 @@ use vulkano::{
     render_pass::Subpass,
 };
 
-use crate::{
-    bounds::Sphere3Df,
-    surfel::{VkSurfelColorMaskAge, VkSurfelNormalRadius, VkSurfelPositionConf, VkSurfelStorage},
-    viz::{
-        controllers::FrameStepInfo,
-        misc::get_normal_matrix,
-        node::{node_ref, CommandBuffersContext, MakeNode, Mat4x4, Node, NodeProperties, NodeRef},
-        Manager,
-    },
+use crate::surfel::{
+    VkSurfelColorMaskAge, VkSurfelNormalRadius, VkSurfelPositionConf, VkSurfelStorage,
 };
+use align3d::viz::{
+    controllers::FrameStepInfo,
+    node::{node_ref, CommandBuffersContext, Mat4x4, Node, NodeProperties, NodeRef},
+    Sphere3Df,
+};
+
 use parking_lot::Mutex;
 use std::sync::Arc;
+
+use super::normal_matrix::get_normal_matrix;
 
 pub struct SurfelNode {
     pub properties: NodeProperties,
@@ -54,32 +55,24 @@ impl SurfelNode {
     }
 }
 
-impl MakeNode for Arc<Mutex<VkSurfelStorage>> {
-    type Node = SurfelNode;
-
-    fn make_node(&self, _manager: &mut Manager) -> NodeRef<dyn Node> {
-        SurfelNode::new(self.clone())
-    }
-}
-
 mod vs {
     vulkano_shaders::shader! {
         ty: "vertex",
-        path: "resources/shaders/surfel/surfel_model.vert",
+        path: "src/shaders/surfel/surfel_model.vert",
     }
 }
 
 mod gs {
     vulkano_shaders::shader! {
         ty: "geometry",
-        path: "resources/shaders/surfel/surfel_model.geom",
+        path: "src/shaders/surfel/surfel_model.geom",
     }
 }
 
 mod fs {
     vulkano_shaders::shader! {
         ty: "fragment",
-        path: "resources/shaders/surfel/surfel_model.frag"
+        path: "src/shaders/surfel/surfel_model.frag"
     }
 }
 
@@ -204,34 +197,4 @@ impl Node for SurfelNode {
 
         drop(model);
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use rstest::*;
-
-    use crate::viz::{Manager, OffscreenRenderer};
-
-    #[fixture]
-    fn offscreen_renderer() -> (Manager, OffscreenRenderer) {
-        let mut manager = Manager::default();
-        println!("Using device: {}", manager.device_name());
-        let renderer = OffscreenRenderer::new(&mut manager, 640, 480);
-        (manager, renderer)
-    }
-
-    // #[ignore]
-    // #[rstest]
-    // fn test_creation(
-    //     offscreen_renderer: (Manager, OffscreenRenderer),
-    //     sample_teapot_pointcloud: PointCloud,
-    // ) {
-    //     let (manager, mut offscreen_renderer) = offscreen_renderer;
-    //     let mem_alloc = StandardMemoryAllocator::new_default(manager.device.clone());
-    //     let node = VkPointCloudNode::new(VkPointCloud::from_pointcloud(
-    //         &mem_alloc,
-    //         &sample_teapot_pointcloud,
-    //     ));
-    //     offscreen_renderer.render(node);
-    // }
 }

@@ -24,9 +24,9 @@ use vulkano::{
     memory::allocator::MemoryAllocator,
 };
 
-use crate::camera::PinholeCamera;
-use crate::image::RgbdImage;
-use crate::range_image::RangeImage;
+use align3d::camera::PinholeCamera;
+use align3d::range_image::RangeImage;
+use align3d::RgbdImage;
 
 use super::indexmap::IndexMap;
 use super::Surfel;
@@ -94,7 +94,7 @@ impl SurfelData {
 pub struct CpuSurfelWriter<'model> {
     model: &'model mut SurfelData,
     allocator: &'model mut SimpleAllocator,
-    sparse_features: &'model mut HashMap<usize, BitArray<64>>
+    sparse_features: &'model mut HashMap<usize, BitArray<64>>,
 }
 
 impl<'model> CpuSurfelWriter<'model> {
@@ -197,7 +197,7 @@ impl VkSurfelColorMaskAge {
         }
     }
 
-    pub fn into_parts(&self) -> (u8, u8, u8, u8, u32) {
+    pub fn to_parts(&self) -> (u8, u8, u8, u8, u32) {
         let rgbm = self.rgbmask_age[0];
         (
             ((rgbm >> 24) & 0xff) as u8,
@@ -413,7 +413,7 @@ pub struct SurfelModel {
     data: SurfelData,
     allocator: SimpleAllocator,
     size: usize,
-    pub sparse_features: HashMap<usize, BitArray<64>>
+    pub sparse_features: HashMap<usize, BitArray<64>>,
 }
 
 impl SurfelModel {
@@ -424,7 +424,7 @@ impl SurfelModel {
             data: SurfelData::new(size),
             allocator: SimpleAllocator::new(size),
             size,
-            sparse_features: HashMap::new()
+            sparse_features: HashMap::new(),
         }
     }
 
@@ -433,7 +433,7 @@ impl SurfelModel {
         CpuSurfelWriter {
             model: &mut self.data,
             allocator: &mut self.allocator,
-            sparse_features: &mut self.sparse_features
+            sparse_features: &mut self.sparse_features,
         }
     }
 
@@ -577,17 +577,16 @@ mod tests {
     use crate::{
         image::IntoImageRgb8,
         surfel::SurfelBuilder,
-        transform::TransformableMove,
         unit_test::{sample_range_img_ds2, TestRangeImageDataset},
-        viz::Manager,
     };
+    use align3d::{transform::TransformableMove, viz::Manager};
 
     use super::SurfelModel;
 
     #[rstest]
     pub fn test_render_to_rgbd_image(sample_range_img_ds2: TestRangeImageDataset) {
         let ri_image = sample_range_img_ds2.get(0).unwrap();
-        let camera = sample_range_img_ds2.pinhole_camera(0);
+        let camera = sample_range_img_ds2.get_pinhole_camera(0);
 
         let manager = Manager::default();
         let mut model = SurfelModel::new(&manager.memory_allocator, 500_000);

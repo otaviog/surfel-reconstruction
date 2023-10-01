@@ -1,7 +1,7 @@
 use nalgebra::Vector3;
 use ndarray::ArrayView1;
 
-use crate::{
+use align3d::{
     transform::{Transform, Transformable},
     viz::node::Mat4x4,
 };

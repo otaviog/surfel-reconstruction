@@ -1,6 +1,15 @@
-pub fn integer_fractional(x: f32) -> (usize, f32) {
-    let x_int = x as usize;
-    let x_frac = x.fract();
+use nalgebra::{RealField, Vector3};
 
-    (x_int, x_frac)
+/// Returns the angle between two normals in radians.
+///
+/// # Arguments
+///
+/// * lfs - Left normal.
+/// * rfs - Right normal.
+///
+/// # Returns
+///
+/// * Angle between the two normals in radians.
+pub fn angle_between_normals<T: RealField>(lfs: &Vector3<T>, rfs: &Vector3<T>) -> T {
+    lfs.dot(rfs).acos().abs()
 }

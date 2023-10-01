@@ -1,7 +1,7 @@
 use nalgebra::Vector3;
 use ndarray::Array2;
 
-use crate::camera::PinholeCamera;
+use align3d::camera::PinholeCamera;
 use rayon::prelude::*;
 
 /// IndexMap is a 2D array of indices of surfels in the surfel model.
